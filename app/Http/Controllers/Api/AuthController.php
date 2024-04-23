@@ -39,12 +39,12 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        
+
 
         $credentials = request(['username', 'password']);
         $token = auth()->attempt($credentials);
         if (! $token = auth()->attempt($credentials)) {
-            return response()->errorJson('Username or password not match!', 401);
+            return response()->errorJson('Foydalanuvchi nomi yoki parol mos emas!', 404);
         }
         $user = new UserResource(auth()->user());
         return $this->respondWithToken($token ,$user);
