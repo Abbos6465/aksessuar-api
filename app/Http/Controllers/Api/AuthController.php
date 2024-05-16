@@ -56,7 +56,7 @@ class AuthController extends Controller
         if($user) {
             return response()->successJson($user);
         }
-        return response()->errorJson('Unauthorized', 401);
+        return response()->errorJson("Tizimga kirishga ruxsat yo'q", 401);
     }
 
     /**

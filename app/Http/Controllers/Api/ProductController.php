@@ -34,8 +34,8 @@ class ProductController extends Controller
 
         $brand = Brand::find($request->brand_id);
 
-        if ($request->category_id != $brand->category_id) {
-            return response()->json("Tanlangan brand bu kategoriyaga tegishli emas");
+        if ($request->category_id !== $brand->category_id) {
+            return response()->errorJson('Tanlangan brand bu kategoriyaga tegishli emas!', 404);
         }
 
         return $request;
@@ -60,7 +60,7 @@ class ProductController extends Controller
         if ($product) {
             return new ProductResource($product);
         } else {
-            return response()->json("Product yo'q");
+            return response()->errorJson('!', 404);
         }
     }
 
@@ -105,7 +105,7 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return response()->json("Deleted Successfully");
+        return response()->json("Muvaffaqqiyatli o'chirildi");
     }
 
     public function getProductByCategory(Category $category)
