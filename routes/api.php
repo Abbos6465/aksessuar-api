@@ -31,10 +31,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'api', 'namespace' => 'Api'], fu
     });
 
     Route::middleware('auth:api')->group(function () {
-        Route::group(['prefix' => 'products'],function () {
-            Route::get('category/{category}', [ProductController::class,'getProductByCategory']);
-            Route::get('brand/{brand}', [ProductController::class, 'getProductByBrand']);
-        });
+        Route::get('categories-width-brands', [ProductController::class, 'getCategoriesWidthBrands']);
         Route::apiResources([
             'users' => UserController::class,
             'products' => ProductController::class

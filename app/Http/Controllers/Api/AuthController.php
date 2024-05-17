@@ -82,13 +82,7 @@ class AuthController extends Controller
         return $this->respondWithToken(auth()->refresh(), \auth()->user());
     }
 
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     protected function respondWithToken($token, $user)
     {
         return response()->successJson([

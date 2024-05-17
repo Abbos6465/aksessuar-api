@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductStore;
 use App\Http\Requests\Product\UpdateProductRequest;
+use App\Http\Resources\Category\CategoryWidthBrandResource;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Brand;
@@ -20,9 +21,23 @@ class ProductController extends Controller
         $this->middleware('auth:api')->only(['store', 'update', 'destroy']);
     }
 
-    public function index()
+    public function index(Request $request, Product $product)
     {
-        return new ProductCollection(Product::latest()->paginate(9));
+        $params = $this->validate($request,[
+            'category_id' => 'nullable|integer',
+            'brand_id' => 'nullable|integer'
+        ]);
+        $query = $product->query();
+
+        if(isset($params['category_id']) && $params['category_id']) {
+            $query = $query->where('category_id', $params['category_id']);
+        }
+
+        if(isset($params['brand_id']) && $params['brand_id']){
+            $query = $query->where('brand_id', $params['brand_id']);
+        }
+
+        return new ProductCollection($query->latest()->paginate(12));
     }
 
 
@@ -108,18 +123,10 @@ class ProductController extends Controller
         return response()->json("Muvaffaqqiyatli o'chirildi");
     }
 
-    public function getProductByCategory(Category $category)
+    public function getCategoriesWidthBrands()
     {
-
-        $products = $category->products()->latest()->paginate(9);
-        return new ProductCollection($products);
-    }
-
-    public function getProductByBrand(Brand $brand)
-    {
-        $products = $brand->products()->latest()->paginate(9);
-
-        return new ProductCollection($products);
-
+        $categories = Category::with('brands')->get();
+        $categoriesWidthBrands = CategoryWidthBrandResource::collection($categories);
+        return response()->json($categoriesWidthBrands);
     }
 }
