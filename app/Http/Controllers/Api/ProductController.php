@@ -23,18 +23,32 @@ class ProductController extends Controller
 
     public function index(Request $request, Product $product)
     {
-        $params = $this->validate($request,[
+        $params = $this->validate($request, [
             'category_id' => 'nullable|integer',
-            'brand_id' => 'nullable|integer'
+            'brand_id' => 'nullable|integer',
+            'name' => 'nullable|string'
         ]);
-        $query = $product->query();
 
-        if(isset($params['category_id']) && $params['category_id']) {
-            $query = $query->where('category_id', $params['category_id']);
+        $query = $product->newQuery();
+
+        if (!empty($params['category_id'])) {
+            $query->where('category_id', $params['category_id']);
         }
 
-        if(isset($params['brand_id']) && $params['brand_id']){
-            $query = $query->where('brand_id', $params['brand_id']);
+        if (!empty($params['brand_id'])) {
+            $query->where('brand_id', $params['brand_id']);
+        }
+
+        if (!empty($params['name'])) {
+            // Mahsulot nomi, kategoriya va brendlarni qidirish uchun yagona where bo'lishi uchun function ichida query yaratish
+            $query = $query->where(function ($q) use ($params) {
+                $categoryIds = Category::where('name', 'like', '%' . $params['name'] . '%')->pluck('id')->toArray();
+                $brandIds = Brand::where('name', 'like', '%' . $params['name'] . '%')->pluck('id')->toArray();
+
+                $q->where('title', 'like', '%' . $params['name'] . '%')
+                    ->orWhereIn('category_id', $categoryIds)
+                    ->orWhereIn('brand_id', $brandIds);
+            });
         }
 
         return new ProductCollection($query->latest()->paginate(12));

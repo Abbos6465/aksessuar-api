@@ -69,7 +69,7 @@ class AuthController extends Controller
 
         Auth::logout();
 
-        return response()->successJson(['message' => 'Successfully logged out']);
+        return response()->successJson(['message' => 'Tizimdan muvaffaqqiyatli chiqildi']);
     }
 
     /**
