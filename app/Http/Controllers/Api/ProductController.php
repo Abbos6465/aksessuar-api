@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductStore;
 use App\Http\Requests\Product\UpdateProductRequest;
+use App\Http\Resources\Brand\BrandResource;
+use App\Http\Resources\Category\CategoryResource;
 use App\Http\Resources\Category\CategoryWidthBrandResource;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
@@ -84,12 +86,13 @@ class ProductController extends Controller
     }
 
 
-    public function show(Product $product)
-    {
+    public function show($id){
+        $product = Product::find($id);
+
         if ($product) {
-            return new ProductResource($product);
+            return response()->successJson(new ProductResource($product));
         } else {
-            return response()->errorJson('!', 404);
+            return response()->errorJson('Not Found', 404);
         }
     }
 
@@ -141,6 +144,23 @@ class ProductController extends Controller
     {
         $categories = Category::with('brands')->get();
         $categoriesWidthBrands = CategoryWidthBrandResource::collection($categories);
-        return response()->json($categoriesWidthBrands);
+        return response()->successJson($categoriesWidthBrands);
+    }
+
+    public function getCategories(){
+        $categories = CategoryResource::collection(Category::all());
+
+        return response()->successJson($categories);
+    }
+
+    public function getBrands($id){
+
+        $category = Category::find($id);
+
+        if ($category){
+            return response()->successJson(new BrandResource($category->brands));
+        } else {
+            return response()->errorJson('Not Found', 404);
+        }
     }
 }

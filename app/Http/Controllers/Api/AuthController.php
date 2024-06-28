@@ -13,11 +13,6 @@ use Tymon\JWTAuth\JWTAuth;
 
 class AuthController extends Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login','register']]);
@@ -59,11 +54,6 @@ class AuthController extends Controller
         return response()->errorJson("Tizimga kirishga ruxsat yo'q", 401);
     }
 
-    /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function logout()
     {
 
@@ -72,11 +62,6 @@ class AuthController extends Controller
         return response()->successJson(['message' => 'Tizimdan muvaffaqqiyatli chiqildi']);
     }
 
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh(), \auth()->user());
@@ -88,7 +73,7 @@ class AuthController extends Controller
         return response()->successJson([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 36000,
+            'expires_in' => auth('api')->factory()->getTTL() * 60000,
             'user' => $user,
         ]);
     }
