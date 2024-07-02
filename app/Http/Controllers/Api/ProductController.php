@@ -158,7 +158,7 @@ class ProductController extends Controller
         $category = Category::find($id);
 
         if ($category){
-            return response()->successJson(new BrandResource($category->brands));
+            return response()->successJson(BrandResource::collection($category->brands));
         } else {
             return response()->errorJson('Not Found', 404);
         }
